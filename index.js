@@ -20,7 +20,7 @@ const app = express();
 
 app.set("view engine", "html");
 app.engine("html", require("hbs").__express);
-app.set("views", path.join(__dirname, "views"))
+app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("./static"));
@@ -61,17 +61,18 @@ app.get("/preference_id", async function (req, res) {
 app.post("/process_payment", (req, res) => {
   const { selectedPaymentMethod, formData } = req.body;
 
-  if ( formData?.payment_method_id === 'pse' ) {
+  if (formData?.payment_method_id === "pse") {
     // 'pse' is only available for Colombia
     formData.additional_info = {
-      ip_address: req.ip
-    }
-    formData.callback_url = 'https://mercadopago.com/'
+      ip_address: req.ip,
+    };
+    formData.callback_url = "https://mercadopago.com/";
   }
 
-  mercadopago.payment.create(formData)
-    .then(response => res.status(201).json(formatResponse(response)))
-    .catch(error => {
+  mercadopago.payment
+    .create(formData)
+    .then((response) => res.status(201).json(formatResponse(response)))
+    .catch((error) => {
       const { errorMessage, errorStatus } = validateError(error);
       res.status(errorStatus).json({ error_message: errorMessage });
     });
@@ -82,12 +83,12 @@ function formatResponse(response) {
   return {
     detail: data.status_detail,
     status: data.status,
-    id: data.id
+    id: data.id,
   };
 }
 
 function validateError(error) {
-  let errorMessage = 'Unknown error cause';
+  let errorMessage = "Unknown error cause";
   let errorStatus = 500;
 
   if (error.cause && error.cause.length) {
